@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Statistik - Modus Data Kelompok</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* Styling untuk modal */
+        #modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+            display: none;
+            /* Modal tidak ditampilkan secara default */
+        }
+
+        #modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        #close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #close-modal:hover,
+        #close-modal:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        /* Styling for the title with animation */
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 2s ease-in-out, pulse 2s infinite alternate;
+        }
+
+        /* Card container for the game */
+        #game {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            text-align: center;
+            animation: slideIn 1s ease-out;
+            color: #333;
+        }
+
+        /* Text for input instructions with animation */
+        p {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+            font-weight: 500;
+            animation: slideInLeft 1.5s ease-out, colorShift 3s infinite alternate;
+        }
+
+        /* Input field styling */
+        #input-data {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Placeholder styling */
+        #input-data::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 1;
+            /* Ensure full visibility */
+        }
+
+        #input-data:focus {
+            outline: none;
+            border-color: #fff;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Button styling */
+        button {
+            padding: 12px 25px;
+            background-color: #00d4ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00aaff;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(1);
+        }
+
+        /* Styling for the result text */
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #00d4ff;
+            font-weight: 600;
+            animation: fadeInUp 1s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5),
+                    0 0 20px rgba(255, 255, 255, 0.4);
+            }
+
+            100% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
+                    0 0 40px rgba(255, 255, 255, 0.6);
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Slide-in animation for 'Masukkan data kelompok' text */
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Color shift animation to make the text change colors smoothly */
+        @keyframes colorShift {
+            0% {
+                color: #fff;
+            }
+
+            100% {
+                color: #00d4ff;
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Game Statistik: Temukan Modus Data Kelompok</h1>
+    <div id="game">
+        <p>Masukkan data kelompok:</p>
+        <input type="text" id="input-data" placeholder="Contoh: 50, 60, 71, 78, 78" />
+        <button id="calculate-modus">Hitung Modus</button>
+        <button id="show-how">Lihat Cara</button>
+        <p id="result"></p>
+    </div>
+
+    <!-- Modal untuk cara menghitung modus -->
+    <div id="modal">
+        <div id="modal-content">
+            <span id="close-modal">&times;</span>
+            <h2>Cara Menghitung Modus Data Kelompok</h2>
+            <ol>
+                <li>
+                    **Pahami Data**: Data kelompok dapat berupa angka individu
+                    (misalnya, <code>33, 44, 55</code>) atau rentang (misalnya,
+                    <code>5-10, 15-20</code>).
+                </li>
+                <li>
+                    **Pisahkan Data**: Pastikan setiap nilai atau rentang dipisahkan
+                    dengan koma.
+                </li>
+                <li>
+                    **Hitung Frekuensi**: Hitung berapa kali setiap nilai muncul. Untuk
+                    rentang, hitung setiap angka dalam rentang tersebut.
+                </li>
+                <li>
+                    **Tentukan Modus**: Temukan nilai dengan frekuensi tertinggi. Jika
+                    ada lebih dari satu nilai dengan frekuensi tertinggi, maka ada
+                    beberapa modus.
+                </li>
+                <li>**Hasil**: Setelah menghitung, hasil modus akan ditampilkan.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        document
+            .getElementById("calculate-modus")
+            .addEventListener("click", function () {
+                const input = document.getElementById("input-data").value;
+                if (!input) {
+                    alert("Masukkan data kelompok yang valid!");
+                    return;
+                }
+
+                const groups = input.split(",").map((group) => group.trim());
+                const frequencies = {};
+
+                groups.forEach((group) => {
+                    const value = Number(group);
+                    if (!isNaN(value)) {
+                        frequencies[value] = (frequencies[value] || 0) + 1;
+                    }
+                });
+
+                let modus = null;
+                let maxFrequency = 0;
+
+                for (const value in frequencies) {
+                    if (frequencies[value] > maxFrequency) {
+                        maxFrequency = frequencies[value];
+                        modus = value;
+                    }
+                }
+
+                const resultElement = document.getElementById("result");
+                if (modus !== null) {
+                    resultElement.textContent = `Modus data kelompok: ${modus}`;
+                } else {
+                    resultElement.textContent = "Tidak ada data untuk dihitung.";
+                }
+            });
+
+        document
+            .getElementById("show-how")
+            .addEventListener("click", function () {
+                document.getElementById("modal").style.display = "block";
+            });
+
+        document
+            .getElementById("close-modal")
+            .addEventListener("click", function () {
+                document.getElementById("modal").style.display = "none";
+            });
+
+        // Menutup modal jika klik di luar modal
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("modal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+</body>
+
+</html>
